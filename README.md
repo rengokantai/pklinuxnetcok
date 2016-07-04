@@ -41,7 +41,29 @@ ifup eth0
 ######Connecting two networks
 ```
 ```
-
+#####Chapter 4. Remote Access
+######Installing OpenSSH
+```
+apt-get install ssh
+apt-get install openssh-server //centos
+```
+######Using OpenVPN
+```
+apt-get install openvpn
+openvpn --genkey --secret /etc/openvpn/static.key
+vim /usr/share/doc/openvpn/examples/sample-config-files/client.conf
+```
+edit
+```
+remote wanaddress
+proto udp
+dev tun
+secret /path/to/static.key
+ifconfig 10.8.0.2 10.8.0.1
+route 192.168.1.0 255.255.255.0
+comp-lzo
+verb 3
+```
 
 #####Chapter 5. Web Servers
 ######Configuring Apache with TLS
@@ -72,6 +94,43 @@ edit relevant file
 ```
 /etc/httpd/conf.d/ssl.conf
 ```
+#####Chapter 6. Directory Services
+######Configuring Samba as an Active Directory
+```
+apt-get install ntp samba smbclient
+bash -c 'echo "manual" > /etc/init/nmbd.override'
+bash –c 'echo "manual" > /etc/init/smbd.override'
+```
+then
+```
+rm /etc/samba/smb.conf
+samba-tool domain provision --realm ad.example.org --domain example --use-rfc2307 --option="interfaces=lo eth1" --option="bind interfaces only=yes" --dns-backend BIND9_DLZ
+```
+
+
+#####Chapter 8. Setting up E-mail
+######Configuring Postfix to send and receive e-mail
+```
+apt-get install postfix mailutils
+vim /etc/postfix/main.cf
+```
+edit
+```
+mydomain = domain.com
+mydestination = $mydomain $myhostname
+mynetworks = 127.0.0.0/8
+```
+then
+```
+postfix reload
+```
+
+######
+
+
+
+
+
 
 #####Chapter 10. Monitoring Your Network
 ######Installing Nagios
